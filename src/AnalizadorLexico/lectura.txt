@@ -1,2 +1,3 @@
 //Comentario
-read 30
+read _301c ;
+write x = 34

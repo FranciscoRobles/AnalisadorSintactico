@@ -112,7 +112,6 @@ int identificar(){
 				else if(estado == 0)
 				{
 					estado = tipoPuntuacion(c, estado);
-					break;
 				}
 				else if(estado == 20)
 				{
@@ -182,7 +181,6 @@ void token(){
 	inicio = fopen("AnalizadorLexico/lectura.txt", "r");
 	avance = fopen("AnalizadorLexico/lectura.txt", "r");
 	extern tokensArray t;
-	t.tk[0] = 1;
 	int estadoFinal = 0;
 	while(!isfeof()){
 		estadoFinal = identificar();
@@ -230,7 +228,7 @@ void token(){
 					}
 				}
 				if(estadoFinal == 11 || estadoFinal == 108 || estadoFinal == 112 || estadoFinal == 114 || estadoFinal == 115 || estadoFinal ==116){
-				estadoFinal = 10;
+				estadoFinal = 15;
 				}
 				for(int i = 0;i<100;i++){
 					palabra[i] = (char)0;

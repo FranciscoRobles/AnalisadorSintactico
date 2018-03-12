@@ -3,7 +3,8 @@
 #include "AnalizadorLexico/analizadorLexico.h"
 #include "AnalizadorLexico/analizadorLexico.c"
 
-int value;
+int posicion = 0;
+int estado = 0;
 tokensArray t;
 
 typedef struct node{
@@ -114,39 +115,302 @@ void display(node* n)
 programa = 0;
 secuenciaSent = 1;
 sentencia = 2;
-
+sentIf = 3;
+sentRepeat = 4;
+sentAssign = 5;
+sentRead = 6;
+sentWrite = 7;
+expr = 8;
+opComparacion = 9;
+expSimple = 10;
+opSuma = 11;
+term = 12;
+opMult = 13;
+factor = 14;
 */
 
-int programa(){
-	root = create(0, NULL);
+int factor(){
+	printf("Factor - 14 (%d)\n", posicion);
+	if(t.tk[posicion] == 31)
+	{
+		printf("'(' - 31 (%d)\n", posicion);
+		posicion++;
+		if(expr()!=1)
+		{
+			return -1;
+		}
+		posicion++;
+		if(t.tk[posicion] == 32)
+		{
+			printf("')' - 32 (%d)\n", posicion);
+			posicion++;
+			return 1;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	else if(t.tk[posicion] == 15)
+	{
+		printf("Numero - 15 (%d)\n", posicion);
+		posicion++;
+		return 1;
+	}
+	else if(t.tk[posicion] == 20)
+	{
+		printf("Identificador - 20 (%d)\n", posicion);
+		posicion++;
+		return 1;
+	}
+	return -1;
+}
+
+int opMult(){
+	if((t.tk[posicion] != 43 && t.tk[posicion] != 44) || posicion >= 99)
+	{
+		return -1;
+	}
+	else
+	{
+		printf("OpMult - 13 (%d)\n", posicion);
+		if(t.tk[posicion] == 43)
+		{
+			printf("'*' - 43 (%d)\n", posicion);
+		}
+		if(t.tk[posicion] == 44)
+		{
+			printf("'/' - 44 (%d)\n", posicion);
+		}
+	}
 	return 1;
 }
 
-int secuenciaSent(){
-	root = append(root, 1);
+int term(){
+	printf("Term - 12 (%d)\n", posicion);
+	if(factor()!=1)
+	{
+		return -1;
+	}
+	if(opMult() == 1)
+	{
+		posicion++;
+		if(factor() != -1)
+		{
+			return -1;
+		}
+	}
 	return 1;
 }
 
-int sentencia(){
-	root = append(root, 2);
+int opSuma(){
+	if((t.tk[posicion] != 41 && t.tk[posicion] != 42) || posicion >= 99)
+	{
+		return -1;
+	}
+	else
+	{
+		printf("OpSuma - 11 (%d)\n", posicion);
+		if(t.tk[posicion] == 41)
+		{
+			printf("'+' - 41 (%d)\n", posicion);
+		}
+		if(t.tk[posicion] == 42)
+		{
+			printf("'-' - 42 (%d)\n", posicion);
+		}
+	}
+	return 1;
+}
+
+int expSimple(){
+	printf("ExpSimple - 10 (%d)\n", posicion);
+	if(term()!=1)
+	{
+		return -1;
+	}
+	if(opSuma() == 1)
+	{
+		posicion++;
+		if(term() != 1)
+		{
+			return -1;
+		}
+	}
+	return 1;
+}
+
+int opComparacion(){
+	if((t.tk[posicion] != 51 && t.tk[posicion] != 53) || posicion >= 99)
+	{
+		return -1;
+	}
+	else
+	{
+		printf("OpComparacion - 9 (%d)\n", posicion);
+		if(t.tk[posicion] == 51)
+		{
+			printf("'=' - 51 (%d)\n", posicion);
+		}
+		if(t.tk[posicion] == 53)
+		{
+			printf("'<' - 53 (%d)\n", posicion);
+		}
+	}
+	return 1;
+}
+
+int expr(){
+	printf("Expr - 8 (%d)\n", posicion);
+	if(expSimple()!=1)
+	{
+		return -1;
+	}
+	if(opComparacion() == 1)
+	{
+		posicion++;
+		if(expSimple() != 1 && t.tk[posicion] !=0)
+		{
+			return -1;
+		}
+	}
+	return 1;
+}
+
+int sentWrite(){
+	if(t.tk[posicion] != 28 || posicion >= 99)
+	{
+		return -1;
+	}
+	printf("Sent Write - 7 (%d)\n", posicion);
+	printf("Write - 28 (%d)\n", posicion);
+	posicion++;
+	if(expr()!=1)
+	{
+		return -1;
+	}
+	return 1;
+}
+
+int sentRead(){
+	if(t.tk[posicion] != 27 || posicion >= 99)
+	{
+		return -1;
+	}
+	printf("Sent Read - 6 (%d)\n", posicion);
+	printf("Read - 27 (%d)\n", posicion);
+	posicion++;
+	if(t.tk[posicion] != 20 || posicion >= 90)
+	{
+		return -1;
+	}
+	printf("Identificador - 20 (%d)\n", posicion);
+	posicion++;
+	return 1;
+}
+
+int sentAssign(){
+	if(t.tk[posicion] != 20 || posicion >= 99)
+	{
+		return -1;
+	}
+	printf("Sent Assign- 5 (%d)\n", posicion);
+	printf("Identificador - 20 (%d)\n", posicion);
+	posicion++;
+	return 1;
+}
+
+int sentRepeat(){
+	if(t.tk[posicion] != 25 || posicion >= 99)
+	{
+		return -1;
+	}
+	printf("Sent Repeat - 4 (%d)\n", posicion);
+	printf("Repeat - 25 (%d)\n", posicion);
+	posicion++;
 	return 1;
 }
 
 int sentIf(){
-	root = append(root, 4);
+	if(t.tk[posicion] != 21 || posicion >= 99)
+	{
+		return -1;
+	}
+	printf("Sent If - 3 (%d)\n", posicion);
+	printf("If - 21 (%d)\n", posicion);
+	posicion++;
 	return 1;
 }
 
+int sentencia(){
+	printf("Sentencia - 2 (%d)\n", posicion);
+	if(sentIf() == 1)
+	{
+		return 1;
+	}
+	else if(sentRepeat() == 1)
+	{
+		return 1;
+	}
+	else if(sentAssign() == 1)
+	{
+		return 1;
+	}
+	else if(sentRead() == 1)
+	{
+		return 1;
+	}
+	else if(sentWrite() == 1)
+	{
+		return 1;
+	}
+	return -1;
+}
+
+int secuenciaSent(){
+	printf("Secuencia Sent - 1 (%d)\n", posicion);
+	if(sentencia()!=1)
+	{
+		return -1;
+	}
+	while(posicion>=99 || t.tk[posicion] != 0){
+		if(t.tk[posicion] == 63)
+		{
+			printf("';' - 63 (%d)\n", posicion);
+			posicion++;
+			if(sentencia()!=1)
+			{
+				return -1;
+			}
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	return 1;
+}
+
+int programa(){
+	printf("Programa - 0 (%d)\n", posicion);
+	return secuenciaSent();
+}
+
 int main(){
-	int estado = programa();
-	estado = secuenciaSent();
-	estado = sentencia();
 	extern tokensArray t;
-	printf("%d\n", t.tk[0]);
 	token();
-	printf("%d\n", t.tk[0]);
-	printf("%d\n", t.tk[1]);
-	printf("%d\n", t.tk[2]);
+/*	for(int i = 0; i < 10; i++)
+	{
+		printf("%d: %d\n", i, t.tk[i]);
+	}*/
+	if(programa() == 1)
+	{
+		printf("Genial! No hubo errores sintácticos\n");
+	}
+	else
+	{
+		printf("Hubo un error sintáctico\n");
+	}
 	dispose(root);
 	return 0;
 }
