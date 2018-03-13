@@ -1,3 +1,5 @@
 //Comentario
 read _301c ;
-write x = 34
+write x = 34 ; t : = 4 ;
+repeat write yw2_ < 5 until zhh = 33 ;
+if ( x = 4 ) then repeat read g until g < 3 else read h end

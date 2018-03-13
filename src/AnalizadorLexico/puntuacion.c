@@ -2,7 +2,7 @@
 61 = '.'
 62 = ','
 63 = ';'
-64  = ':'
+64 = ':'
 */
 
 int tipoPuntuacion(char c, int estado){

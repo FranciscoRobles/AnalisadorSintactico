@@ -4,7 +4,6 @@
 #include "AnalizadorLexico/analizadorLexico.c"
 
 int posicion = 0;
-int estado = 0;
 tokensArray t;
 
 typedef struct node{
@@ -127,6 +126,8 @@ opSuma = 11;
 term = 12;
 opMult = 13;
 factor = 14;
+
+print de debug: printf("x %d - %d", t.tk[posicion], posicion);
 */
 
 int factor(){
@@ -139,7 +140,6 @@ int factor(){
 		{
 			return -1;
 		}
-		posicion++;
 		if(t.tk[posicion] == 32)
 		{
 			printf("')' - 32 (%d)\n", posicion);
@@ -269,7 +269,7 @@ int expr(){
 	if(opComparacion() == 1)
 	{
 		posicion++;
-		if(expSimple() != 1 && t.tk[posicion] !=0)
+		if(expSimple() != 1)
 		{
 			return -1;
 		}
@@ -317,6 +317,22 @@ int sentAssign(){
 	printf("Sent Assign- 5 (%d)\n", posicion);
 	printf("Identificador - 20 (%d)\n", posicion);
 	posicion++;
+	if(t.tk[posicion] != 64 || posicion >= 99)
+	{
+		return -1;
+	}
+	printf("':' - 64 (%d)\n", posicion);
+	posicion++;
+	if(t.tk[posicion] != 51 || posicion >= 99)
+	{
+		return -1;
+	}
+	printf("'=' - 51 (%d)\n", posicion);
+	posicion++;
+	if(expr() != 1)
+	{
+		return -1;
+	}
 	return 1;
 }
 
@@ -328,6 +344,20 @@ int sentRepeat(){
 	printf("Sent Repeat - 4 (%d)\n", posicion);
 	printf("Repeat - 25 (%d)\n", posicion);
 	posicion++;
+	if(secuenciaSent()!=1)
+	{
+		return -1;
+	}
+	if(t.tk[posicion] != 26|| posicion >= 99)
+	{
+		return -1;
+	}
+	printf("Until - 26 (%d)\n", posicion);
+	posicion++;
+	if(expr()!=1)
+	{
+		return -1;
+	}
 	return 1;
 }
 
@@ -339,6 +369,41 @@ int sentIf(){
 	printf("Sent If - 3 (%d)\n", posicion);
 	printf("If - 21 (%d)\n", posicion);
 	posicion++;
+	if(expr()!=1)
+	{
+		return -1;
+	}
+	if(t.tk[posicion] != 22 || posicion >= 99)
+	{
+		return -1;
+	}
+	printf("Then - 22 (%d)\n", posicion);
+	posicion++;
+	if(secuenciaSent()!=1)
+	{
+		return -1;
+	}
+	if(t.tk[posicion] == 23)
+	{
+		printf("Else - 23 (%d)\n", posicion);
+		posicion++;
+		if(secuenciaSent() != 1)
+		{
+			return -1;
+		}
+		if(t.tk[posicion] != 24 || posicion >= 99)
+		{
+			return -1;
+		}
+	}
+	else
+	{
+		if(t.tk[posicion] != 24 || posicion >= 99)
+		{
+			return -1;
+		}
+	}
+	printf("End - 24 (%d)\n", posicion);
 	return 1;
 }
 
@@ -373,17 +438,10 @@ int secuenciaSent(){
 	{
 		return -1;
 	}
-	while(posicion>=99 || t.tk[posicion] != 0){
-		if(t.tk[posicion] == 63)
-		{
-			printf("';' - 63 (%d)\n", posicion);
-			posicion++;
-			if(sentencia()!=1)
-			{
-				return -1;
-			}
-		}
-		else
+	while(posicion>=99 || t.tk[posicion] == 63){
+		printf("';' - 63 (%d)\n", posicion);
+		posicion++;
+		if(sentencia()!=1)
 		{
 			return -1;
 		}
@@ -399,7 +457,7 @@ int programa(){
 int main(){
 	extern tokensArray t;
 	token();
-/*	for(int i = 0; i < 10; i++)
+	/*for(int i = 0; i< 50;i++)
 	{
 		printf("%d: %d\n", i, t.tk[i]);
 	}*/

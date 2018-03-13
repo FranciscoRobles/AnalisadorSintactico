@@ -154,7 +154,6 @@ int identificar(){
 				if(estado == 0)
 				{
 					estado = tipoDelimitacion(c, estado);
-					break;
 				}
 				else if(estado == 20)
 				{
@@ -202,7 +201,7 @@ void token(){
 					{
 						estadoFinal = 23;
 					}
-					else if(palabra[0]=='e'&& palabra[1]=='n'&& palabra[2]=='d'&& (palabra[3]==' '||palabra[3]=='\n'||palabra[3]=='\t'||palabra[3] == (char)0))
+					else if(palabra[0]=='e'&& palabra[1]=='n'&& palabra[2]=='d'&& (palabra[3]==(char)0 || palabra[3] == '\n' || palabra[3] == '\t' || palabra[3] == ' '))
 					{
 						estadoFinal = 24;
 					}
