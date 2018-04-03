@@ -446,6 +446,10 @@ int secuenciaSent(){
 			return -1;
 		}
 	}
+	if(t.tk[posicion] == 0)
+	{
+		return -1;
+	}
 	return 1;
 }
 
